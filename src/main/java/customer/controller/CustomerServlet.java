@@ -31,6 +31,13 @@ public class CustomerServlet extends HttpServlet {
                     e.printStackTrace();
                 }
                 break;
+            case "edit":
+                try {
+                    showEdit(request,response);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                break;
             default:
                 try {
                     showList(request,response);
@@ -38,6 +45,14 @@ public class CustomerServlet extends HttpServlet {
                     e.printStackTrace();
                 }
         }
+    }
+
+    private void showEdit(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher("customer/edit.jsp");
+        int id = Integer.parseInt(request.getParameter("id"));
+        Customer customer =customerService.findById(id);
+        request.setAttribute("customer", customer);
+        requestDispatcher.forward(request,response);
     }
 
     private void deleteCustomer(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ServletException {
@@ -80,7 +95,23 @@ public class CustomerServlet extends HttpServlet {
                     e.printStackTrace();
                 }
                 break;
+            case "edit":
+                try {
+                    editCustomer(request,response);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
+    }
+
+    private void editCustomer(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        int id  = Integer.parseInt(request.getParameter("id"));
+        int age  = Integer.parseInt(request.getParameter("age"));
+        String name  = request.getParameter("name");
+        Customer customer = new Customer(id,name,age);
+        customerService.edit(customer);
+        response.sendRedirect("/customers");
     }
 
     private void createCustomer(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {

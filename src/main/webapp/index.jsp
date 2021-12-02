@@ -12,5 +12,11 @@
   </head>
   <body>
   <a href="/customers"> show customer</a>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <a href="/products">show product</a>
   </body>
 </html>
