@@ -24,6 +24,13 @@ public class CustomerServlet extends HttpServlet {
             case "create":
                 showCreate(request,response);
                 break;
+            case "delete":
+                try {
+                    deleteCustomer(request,response);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                break;
             default:
                 try {
                     showList(request,response);
@@ -31,6 +38,12 @@ public class CustomerServlet extends HttpServlet {
                     e.printStackTrace();
                 }
         }
+    }
+
+    private void deleteCustomer(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ServletException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        customerService.delete(id);
+        response.sendRedirect("/customers");
     }
 
     private void showCreate(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
