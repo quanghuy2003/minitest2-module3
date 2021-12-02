@@ -1,5 +1,6 @@
 package product.service;
 
+import customer.model.Customer;
 import product.model.Product;
 
 import java.sql.*;
@@ -39,32 +40,81 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public List<Product> findAllByAge() throws SQLException {
-        return null;
+    public List<Product> findAllByPrice() throws SQLException {
+        List<Product> productList = new ArrayList<>();
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement("select * from product order by price desc ");
+        ResultSet rs = preparedStatement.executeQuery();
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String name = rs.getString("name");
+            int price = rs.getInt("price");
+            int quantity = rs.getInt("quantity");
+            productList.add(new Product(id, name, price,quantity));
+        }
+        return productList;
     }
 
     @Override
     public List<Product> findByName(String name) throws SQLException {
-        return null;
-    }
+        List<Product> productList = new ArrayList<>();
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement("select * from product where  name like ?");
+        preparedStatement.setString(1, "%"+name+"%");
+        ResultSet rs = preparedStatement.executeQuery();
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String name1 = rs.getString("name");
+            int price = rs.getInt("price");
+            int quantity = rs.getInt("quantity");
+            productList.add(new Product(id, name1, price,quantity));
+        }
+        return productList;    }
 
     @Override
     public void add(Product product) throws SQLException {
-
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement("insert into product(id,name,price,quantity) value (?,?,?,?)");
+        preparedStatement.setInt(1, product.getId());
+        preparedStatement.setString(2, product.getName());
+        preparedStatement.setInt(3, product.getPrice());
+        preparedStatement.setInt(4,product.getQuantity());
+        preparedStatement.executeUpdate();
     }
 
     @Override
     public void edit(Product product) throws SQLException {
-
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement("update product set id=?, name=?,price=?, quantity=? where id =?");
+        preparedStatement.setInt(1, product.getId());
+        preparedStatement.setString(2, product.getName());
+        preparedStatement.setInt(3, product.getPrice());
+        preparedStatement.setInt(4,product.getQuantity());
+        preparedStatement.setInt(5, product.getId());
+        preparedStatement.executeUpdate();
     }
 
     @Override
     public void delete(int id) throws SQLException {
-
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement("delete from product where id=?");
+        preparedStatement.setInt(1,id);
+        preparedStatement.executeUpdate();
     }
 
     @Override
     public Product findById(int id) throws SQLException {
-        return null;
-    }
+        Product product = null;
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement("select * from product where id=?");
+        preparedStatement.setInt(1,id);
+        ResultSet rs = preparedStatement.executeQuery();
+        while (rs.next()){
+            int id1= rs.getInt("id");
+            String name1= rs.getString("name");
+            int price= rs.getInt("price");
+            int quantity = rs.getInt("quantity");
+            product = new Product(id1,name1,price,quantity);
+        }
+        return product;    }
 }
