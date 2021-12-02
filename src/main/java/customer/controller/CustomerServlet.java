@@ -21,6 +21,9 @@ public class CustomerServlet extends HttpServlet {
             action= "";
         }
         switch (action){
+            case "create":
+                showCreate(request,response);
+                break;
             default:
                 try {
                     showList(request,response);
@@ -28,6 +31,11 @@ public class CustomerServlet extends HttpServlet {
                     e.printStackTrace();
                 }
         }
+    }
+
+    private void showCreate(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        RequestDispatcher requestDispatcher =request.getRequestDispatcher("customer/create.jsp");
+        requestDispatcher.forward(request,response);
     }
 
     private void showList(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
@@ -38,7 +46,7 @@ public class CustomerServlet extends HttpServlet {
             RequestDispatcher requestDispatcher = request.getRequestDispatcher("customer/list.jsp");
             requestDispatcher.forward(request,response);
         }else{
-            List<Customer> customerList = customerService.findAllByAge();
+            List<Customer> customerList = customerService.findByName(key);
             request.setAttribute("customerList",customerList);
             RequestDispatcher requestDispatcher = request.getRequestDispatcher("customer/list.jsp");
             requestDispatcher.forward(request,response);
@@ -47,6 +55,27 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+        if (action == null){
+            action= "";
+        }
+        switch (action){
+            case "create":
+                try {
+                    createCustomer(request,response);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
+    }
 
+    private void createCustomer(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        int age = Integer.parseInt(request.getParameter("age"));
+        String name = request.getParameter("name");
+        Customer customer = new Customer(id ,name,age);
+        customerService.add(customer);
+        response.sendRedirect("/customers");
     }
 }

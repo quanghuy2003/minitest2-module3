@@ -58,7 +58,7 @@ public class CustomerServiceImpl implements CustomerService {
         List<Customer> customerList = new ArrayList<>();
         Connection connection = getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement("select * from customer where  name like ?");
-        preparedStatement.setString(1, name);
+        preparedStatement.setString(1, "%"+name+"%");
         ResultSet rs = preparedStatement.executeQuery();
         while (rs.next()) {
             int id = rs.getInt("id");
